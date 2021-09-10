@@ -1,0 +1,18 @@
+#nmap-simple.attack
+Feature: simple nmap attack to check for open ports
+    Background:
+        given "nmap" is installend
+        And the following profile:
+        | name  | value |
+        | hostname  | file scope,txt|
+
+    Scenario: Check standard web ports
+        When I launch "nmap" attack with:
+            """
+            nmap -p443,8443,8080,8888,8000 --script ssl-enum-ciphers
+            """
+        Then the output should match /80.tcp\s+open/
+        Then the output should not match:
+            """
+            "RC4", "NULL", "IDEA", "DES", "3DES", "EDH", "ADH", "DH", "DHE", "CAMELLIA", "SEED", "ECDH", "AECDH", "EXP1024"
+            """
